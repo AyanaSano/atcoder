@@ -49,18 +49,18 @@ size_t random_seed; namespace std { using argument_type = P; template<> struct h
 // end of hamko utils
 
 int main(){
-  int N;
+  ll N;
   cin >> N;
-  vector<int> a(3*N);
-  priority_queue<int, vector<int>, greater<int>> mae;
-  priority_queue<int> ato;
-  int maerui=0;
-  int atorui=0;
-  vector<int> maewa(3*N), atowa(3*N);
-  for(int i = 0; i < 3*N; ++i){
+  vector<ll> a(3*N);
+  priority_queue<ll, vector<ll>, greater<ll>> mae;
+  priority_queue<ll> ato;
+  ll maerui=0;
+  ll atorui=0;
+  vector<ll> maewa(3*N), atowa(3*N);
+  for(ll i = 0; i < 3*N; ++i){
     cin >> a[i];
   }
-  for(int i = 0; i < N; ++i){
+  for(ll i = 0; i < 3*N; ++i){
     mae.push(a[i]);
     maerui += a[i];
     if(mae.size()>N){
@@ -69,7 +69,7 @@ int main(){
     }
     maewa[i] = maerui;
   }
-  for(int i = 3*N-1; i > 0; --i){
+  for(ll i = 3*N-1; i > 0; --i){
     ato.push(a[i]);
     atorui += a[i];
     if(ato.size()>N){
@@ -78,10 +78,9 @@ int main(){
     }
     atowa[i] = atorui;
   }
-  int ans = -1e9;
-  for(int i = N-1; i < N*2; ++i){
+  ll ans = -1e18;
+  for(ll i = N-1; i < N*2; ++i){
     ans = max(ans, maewa[i]-atowa[i+1]);
   }
   cout << ans << endl;
 }
-
