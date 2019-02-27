@@ -1,0 +1,72 @@
+#include <iostream>
+#include <algorithm>
+#include <vector>
+#include <string>
+#include <map>
+#include <utility>
+#include <cstdio>
+typedef long long ll;
+#define MAX 300000
+using namespace std;
+
+class UnionFind{
+  int v[MAX];
+  int deep[MAX];
+  public:
+  UnionFind(){
+    for(int i=1;i<MAX;i++){
+      v[i]=i;
+      deep[i] = 0;
+    }
+  }
+
+  int root(int x){
+    if(v[x]==x)return x;
+    else return v[x] = root(v[x]);
+  }
+
+  bool same(int x, int y){
+    return (root(x) == root(y));
+  }
+
+  void unite(int x,int y){
+    x = root(x);
+    y = root(y);
+    if(deep[x] > deep[y]){
+      v[y] = x;
+    }else{
+      if(deep[x] == deep[y])deep[y]++;
+      v[x] = y;
+    }
+    return;
+  }
+};
+
+int main(){
+  int i,j;
+  int n,k,l;
+  cin >> n >> k >> l;
+  UnionFind uf1,uf2;
+  for(i=0;i<k;i++){
+    int p,q;
+    cin >> p >> q;
+    uf1.unite(p,q);
+  }
+  for(i=0;i<l;i++){
+    int p,q;
+    cin >> p >> q;
+    uf2.unite(p,q);
+  }
+
+  map<pair<int,int>,int > mp;
+  for(i=1;i<=n;i++){
+    mp[make_pair(uf1.root(i),uf2.root(i))]++;
+  }
+  for(i=1;i<=n;i++){
+    cout << mp[make_pair(uf1.root(i),uf2.root(i))];
+    /*if(i==n)cout << endl;
+    else cout << " ";*/
+    printf("%c"," \n"[i==n]);
+  }
+  return 0;
+}
