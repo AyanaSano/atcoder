@@ -11,7 +11,7 @@ using namespace std;
 #define se second
 #define mt make_tuple
 template<class T1, class T2> bool chmin(T1 &a, T2 b) { return b < a && (a = b, true); }
-template<class T1, class T2> bool chmax(T1 &a, T2 b) { return a < b && (a = b, true); }
+template<class T>bool chmax(T &a, const T &b) { if (a<b) { a = b; return 1; } return 0; }
  
 using ll = long long; using vll = vector<ll>; using vvll = vector<vll>; using P = pair<ll, ll>;
 using ld = long double;  using vld = vector<ld>; 
@@ -47,15 +47,48 @@ size_t random_seed; namespace std { using argument_type = P; template<> struct h
 #define mo  (ll)(1e9+7)
 // end of hamko utils
 
-int main(){
-  int L, N;
+//1.dp[左回りで燃やした本数][右回りで燃やした本数][現在地]という状態を持つ
+//2.右回りをしたときの初期位置からの距離を前もって計算しておく
+//3.DPを以下のように遷移させる
+
+int L, N; // 円周, 木の本数
+int X[2222]; // 初期位置からの距離(左回り), 1-indexed
+int Y[2222]; // 初期位置からの距離(右回り), 1-indexed
+int dp[2222][2222][2]; // dp[左回りで燃やした本数][右回りで燃やした本数][現在地]0なら現在左、1なら現在右
+
+signed main() {
   cin >> L >> N;
-  vector<int> x(N+1);
-  x[0]=0;
-  for(int i = 0; i <= N; ++i) cin >> x[i];
-  int ans = 0;
-  for(int i = 1; i <= N; +;i){
-	ans += L-x[N-i] + x[i]
+  for (int i = 1; i <= N; i++) {
+    cin >> X[i];
+    Y[N-i+1] = L - X[i]; // あらかじめ右回りの距離を計算しておく
   }
+
+  for (int li = 0; li <= N; li++) { // 左回りで燃やした本数
+    for (int ri = 0; ri <= N; ri++) { // 右回りで燃やした本数
+      // 左へ
+      if (li > 0) {
+        chmax(dp[li][ri][0], dp[li-1][ri][0] + X[li] - X[li-1]); // 今左
+        chmax(dp[li][ri][0], dp[li-1][ri][1] + X[li] + Y[ri]); // 今右
+      }
+
+      // 右へ
+      if (ri > 0) {
+        chmax(dp[li][ri][1], dp[li][ri-1][0] + X[li] + Y[ri]); // 今左
+        chmax(dp[li][ri][1], dp[li][ri-1][1] + Y[ri] - Y[ri-1]); // 今右
+      }
+    }
+  }
+
+  int ans = 0;
+  for (int li = 0; li <= N; li++) {
+    // li + ri = Nなので
+    int ri = N - li;
+    chmax(ans, dp[li][ri][0]);
+    chmax(ans, dp[li][ri][1]);
+  }
+
+  cout << ans << endl;
+
+
   return 0;
 }
